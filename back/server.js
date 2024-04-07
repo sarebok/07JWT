@@ -1,7 +1,7 @@
 //create basic server
 import express from 'express';
 /* import cors from "cors"; */
-/* import router from "./routes/router.js" */
+import loginRouter from "./routes/loginRouter.js";
 /* import { logRoute } from './src/helpers/helpers.js'; */
 /* import { Logger } from 'logger'; */
 
@@ -13,7 +13,7 @@ app.use(express.json());
 
 
 //manage routes
-/* app.use('/', router); */
+app.use('/', loginRouter);
 
 
 app.get('/', (req, res) => {
