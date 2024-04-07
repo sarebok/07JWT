@@ -1,11 +1,15 @@
 import { byEmail, createUser } from "../models/userModel.js";
-import doteenv from "dotenv";
+import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { findError } from "../utils/utils.js";
 
+dotenv.config()
+
+
 const loginUser = async (req, res) => {
-  const { user } = req.body;
+  const user = req.body;
+  console.log(user);
   
   try {
     const findUser = await byEmail(user);
@@ -30,7 +34,7 @@ const loginUser = async (req, res) => {
         .json({ error: errorFound[0].message });
       } else {
         const { email, rol, lenguage } = findUser;
-        const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ email: findUser.email }, process.env.JWT_SECRET, {
           expiresIn: "1h",
         });
         res.status(200).json({
@@ -55,4 +59,39 @@ const registerUser = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser };
+const showUser = async (req, res) => {
+  try {
+    const bearerToken = req.headers.authorization;
+    if (!bearerToken) {
+      return res.status(403).json({ error: 'No token provided' });
+    }
+
+    const token = bearerToken.split(' ')[1];
+
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+      if (err) {
+        console.error('Token verification failed:', err);
+        return res.status(403).json({ error: 'Failed to authenticate token' });
+      }
+
+      const email = decoded.email;
+      const user = await byEmail({ email });
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Return an array of user objects
+      res.json([{
+        email: user.email,
+        rol: user.rol,
+        lenguage: user.lenguage,
+      }]);
+    });
+  } catch (error) {
+    console.error('Error in showUser:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export { loginUser, registerUser, showUser };

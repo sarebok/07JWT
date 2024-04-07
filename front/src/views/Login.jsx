@@ -7,6 +7,7 @@ import Context from '../contexts/Context'
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 const initialForm = { email: 'docente@desafiolatam.com', password: '123456' }
 
+
 const Login = () => {
   const navigate = useNavigate()
   const [user, setUser] = useState(initialForm)
@@ -24,8 +25,9 @@ const Login = () => {
     if (!emailRegex.test(user.email)) {
       return window.alert('El formato del email no es correcto!')
     }
-
-    axios.post(ENDPOINT.login, user)
+    console.log(user);
+    /* axios.post(ENDPOINT.login, user) */
+    axios.post("http://localhost:3000/login", user)
       .then(({ data }) => {
         window.sessionStorage.setItem('token', data.token)
         window.alert('Usuario identificado con éxito 😀.')

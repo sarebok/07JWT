@@ -32,7 +32,7 @@ const Register = () => {
     if (!emailRegex.test(user.email)) {
       return window.alert('El formato del email no es correcto!')
     }
-
+    console.log(user, "user register");
     axios.post(ENDPOINT.users, user)
       .then(() => {
         window.alert('Usuario registrado con éxito 😀.')

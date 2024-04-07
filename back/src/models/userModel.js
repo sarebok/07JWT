@@ -16,11 +16,19 @@ const createUser = async ({ email, password, rol, lenguage }) => {
 
 
 const byEmail = async ({email}) => {
+
   const SQLquery = {
     text: "SELECT * FROM usuarios WHERE email = $1",
     values: [email],
   };
   const response = await pool.query(SQLquery);
+  pool.query('SELECT 1', (err, res) => {
+    if (err) {
+      console.error('Error executing query', err.stack);
+    } else {
+      console.log('Database connected successfully');
+    }
+  });
   return response.rows[0];
 }
 
