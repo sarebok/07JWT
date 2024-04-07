@@ -1,15 +1,18 @@
 import pool from "../../db/db.js";
 import bcrypt from "bcryptjs";
 
-const createUser = async ({ nombre, apellido, email, password }) => {
-  const hashedPassword = bcrypt.hashSync(password)
-  const SQLquery = {
-    text: "INSERT INTO usuarios (nombre, apellido, email, password) VALUES ($1, $2, $3, $4) RETURNING *",
-    values: [nombre, apellido, email, hashedPassword],
+const createUser = async ({ email, password, rol, lenguage }) => {
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+  
+    const SQLquery = {
+      text: "INSERT INTO usuarios (email, password, rol, lenguage) VALUES ($1, $2, $3, $4) RETURNING *",
+      values: [email, hashedPassword, rol, lenguage],
+    };
+  
+    const response = await pool.query(SQLquery);
+    return response.rows[0];
   };
-  const response = await pool.query(SQLquery);
-  return response.rows[0];
-};
 
 
 const byEmail = async ({email}) => {
@@ -20,4 +23,6 @@ const byEmail = async ({email}) => {
   const response = await pool.query(SQLquery);
   return response.rows[0];
 }
+
+
 export { createUser, byEmail };
