@@ -26,7 +26,7 @@ const Login = () => {
       return window.alert('El formato del email no es correcto!')
     }
     console.log(user);
-    /* axios.post(ENDPOINT.login, user) */
+
     axios.post("http://localhost:3000/login", user)
       .then(({ data }) => {
         window.sessionStorage.setItem('token', data.token)
